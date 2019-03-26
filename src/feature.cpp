@@ -33,8 +33,8 @@ void featureDetectionFast(cv::Mat image, std::vector<cv::Point2f>& points)
 void featureDetectionGoodFeaturesToTrack(cv::Mat image, std::vector<cv::Point2f>& points)  
 {   
 //uses GoodFeaturesToTrack for feature dection, modify parameters as necessary
-
-  int maxCorners = 5000;
+//   int maxCorners = 5000;   // original is 5000
+  int maxCorners = 1000;
   double qualityLevel = 0.01;
   double minDistance = 5.;
   int blockSize = 3;
@@ -50,7 +50,16 @@ void featureTracking(cv::Mat img_1, cv::Mat img_2, std::vector<cv::Point2f>& poi
 //this function automatically gets rid of points for which tracking fails
 
   std::vector<float> err;                    
-  cv::Size winSize=cv::Size(21,21);                                                                                             
+  cv::Size winSize=cv::Size(21,21);  
+
+//  typedef struct CvTermCriteria
+// {
+//   int    type;  /* CV_TERMCRIT_ITER 和CV_TERMCRIT_EPS二值之一，或者二者的组合 */
+//   int    max_iter; /* 最大迭代次数 */
+//   double epsilon; /* 结果的精确性 */
+//  }
+  
+
   cv::TermCriteria termcrit=cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS, 30, 0.01);
 
   calcOpticalFlowPyrLK(img_1, img_2, points1, points2, status, err, winSize, 3, termcrit, 0, 0.001);
@@ -125,7 +134,7 @@ void circularMatching(cv::Mat img_l_0, cv::Mat img_r_0, cv::Mat img_l_1, cv::Mat
   deleteUnmatchFeaturesCircle(points_l_0, points_r_0, points_r_1, points_l_1, points_l_0_return,
                         status0, status1, status2, status3, current_features.ages);
 
-  // std::cout << "points : " << points_l_0.size() << " "<< points_r_0.size() << " "<< points_r_1.size() << " "<< points_l_1.size() << " "<<std::endl;
+  std::cout << "points : " << points_l_0.size() << " "<< points_r_0.size() << " "<< points_r_1.size() << " "<< points_l_1.size() << " "<<std::endl;
 }
 
 

@@ -55,7 +55,7 @@ void matchingFeatures(cv::Mat& imageLeft_t0, cv::Mat& imageRight_t0,
 
 void removeExistPoints(std::vector<cv::Point2f>&  newPoints, 
                        std::vector<bool>& valid,
-                       std::vector<cv::Point2f>&  currentPointsLeft, 
+                       std::vector<cv::Point2f>&  currentPointsLeft,
                        std::vector<cv::Point2f>&  oldPointsLeft);
 
 void distinguishNewPoints(std::vector<cv::Point2f>&  newPoints, 

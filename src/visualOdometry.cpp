@@ -47,7 +47,7 @@ void checkValidMatch(std::vector<cv::Point2f>& points, std::vector<cv::Point2f>&
     for (int i = 0; i < points.size(); i++)
     {
         offset = std::max(std::abs(points[i].x - points_return[i].x), std::abs(points[i].y - points_return[i].y));
-        // std::cout << offset << ", ";
+//         std::cout << offset << ", ";
 
         if(offset > threshold)
         {
@@ -76,7 +76,7 @@ void removeInvalidPoints(std::vector<cv::Point2f>& points, const std::vector<boo
     }
 }
 
-
+// not used in this project
 void removeExistPoints(std::vector<cv::Point2f>&  newPoints, 
                        std::vector<bool>& valid,
                        std::vector<cv::Point2f>&  currentPointsLeft, 
@@ -102,7 +102,7 @@ void removeExistPoints(std::vector<cv::Point2f>&  newPoints,
         valid.push_back(!exist);
 
     }
-    std::cout << "newPoints size : " << newPoints.size() << std::endl;
+//     std::cout << "newPoints size : " << newPoints.size() << std::endl;
 }
 
 
@@ -142,7 +142,7 @@ void distinguishNewPoints(std::vector<cv::Point2f>&  newPoints,
                 obs.pointPoseInFrame = pointPoseIn_t1;
 
                 mapPoints[oldPointIter->id].addObservation(obs); 
-                // std::cout << "!!!!!!!!!!!!!!MapPoint  " << oldPointIter->id << " obs : " << mapPoints[oldPointIter->id].mObservations.size() << std::endl;
+//                 std::cout << "!!!!!!!!!!!!!!MapPoint  " << oldPointIter->id << " obs : " << mapPoints[oldPointIter->id].mObservations.size() << std::endl;
 
                 break;
             }
@@ -182,11 +182,11 @@ void distinguishNewPoints(std::vector<cv::Point2f>&  newPoints,
         valid.push_back(!exist);
     }
 
-    // std::cout << "---------------------------------- "  << std::endl;
-    // std::cout << "currentPointsLeft size : " << currentPointsLeft.size() << std::endl;
-    // std::cout << "points3DFrame_t0 size : " << points3DFrame_t0.size() << std::endl;
-    // std::cout << "points3DFrame_t1 size : " << points3DFrame_t1.size() << std::endl;
-    // std::cout << "points3DWorld size : " << points3DWorld.size() << std::endl;
+//     std::cout << "---------------------------------- "  << std::endl;
+//     std::cout << "currentPointsLeft size : " << currentPointsLeft.size() << std::endl;
+//     std::cout << "points3DFrame_t0 size : " << points3DFrame_t0.size() << std::endl;
+//     std::cout << "points3DFrame_t1 size : " << points3DFrame_t1.size() << std::endl;
+//     std::cout << "points3DWorld size : " << points3DWorld.size() << std::endl;
 
 
 
@@ -216,7 +216,7 @@ void distinguishNewPoints(std::vector<cv::Point2f>&  newPoints,
     //     valid.push_back(!exist);
 
     // }
-    std::cout << "newPoints size : " << newPoints.size() << std::endl;
+//     std::cout << "newPoints size : " << newPoints.size() << std::endl;
 }
 
 void matchingFeatures(cv::Mat& imageLeft_t0, cv::Mat& imageRight_t0,
@@ -239,14 +239,18 @@ void matchingFeatures(cv::Mat& imageLeft_t0, cv::Mat& imageRight_t0,
 
         // append new features with old features
         appendNewFeatures(imageLeft_t0, currentVOFeatures);   
-        std::cout << "Current feature set size: " << currentVOFeatures.points.size() << std::endl;
+//         std::cout << "Current feature set size: " << currentVOFeatures.points.size() << std::endl;
     }
 
     // --------------------------------------------------------
     // Feature tracking using KLT tracker, bucketing and circular matching
     // --------------------------------------------------------
+// for EuRoC datasets, can change  bucket_size and features_per_bucket.
     int bucket_size = 50;
     int features_per_bucket = 4;
+    
+/*    int bucket_size = 30;
+    int features_per_bucket = 2;  */ 
     bucketingFeatures(imageLeft_t0, currentVOFeatures, bucket_size, features_per_bucket);
 
     pointsLeft_t0 = currentVOFeatures.points;
@@ -288,7 +292,8 @@ void trackingFrame2Frame(cv::Mat& projMatrl, cv::Mat& projMatrr,
       cv::Mat translation_mono = cv::Mat::zeros(3, 1, CV_64F);
       E = cv::findEssentialMat(pointsLeft_t1, pointsLeft_t0, focal, principle_point, cv::RANSAC, 0.999, 1.0, mask);
       cv::recoverPose(E, pointsLeft_t1, pointsLeft_t0, rotation, translation_mono, focal, principle_point, mask);
-      std::cout << "recoverPose rotation: " << rotation << std::endl;
+//       std::cout << "recoverPose rotation: " << rotation << std::endl;
+//       std::cout<<  "recoverPose translation_mono: " << translation_mono << std::endl;
 
       // ------------------------------------------------
       // Translation (t) estimation by use solvePnPRansac
@@ -311,7 +316,7 @@ void trackingFrame2Frame(cv::Mat& projMatrl, cv::Mat& projMatrr,
                           inliers, flags );
 
       translation = -translation;
-      std::cout << "inliers size: " << inliers.size() << std::endl;
+//       std::cout << "inliers size: " << inliers.size() << std::endl;
 
 }
 
@@ -378,12 +383,13 @@ void visualOdometry(int current_frame_id, std::string filepath,
         // append new features with old features
         appendNewFeatures(image_left_t0, current_features);   
 
-        std::cout << "Current feature set size: " << current_features.points.size() << std::endl;
+//         std::cout << "Current feature set size: " << current_features.points.size() << std::endl;
     }
 
 
     // --------------------------------------------------------
     // Feature tracking using KLT tracker, bucketing and circular matching
+    // Kitti datasets: the image pixel is 1241 x 376; EuRoC datasets: the image pixel is 752 x 480; 
     // --------------------------------------------------------
     int bucket_size = 50;
     int features_per_bucket = 4;
@@ -444,7 +450,7 @@ void visualOdometry(int current_frame_id, std::string filepath,
                         useExtrinsicGuess, iterationsCount, reprojectionError, confidence,
                         inliers, flags );
 
-    std::cout << "inliers size: " << inliers.size() << std::endl;
+//     std::cout << "inliers size: " << inliers.size() << std::endl;
 
     // translation_stereo = -translation_stereo;
 

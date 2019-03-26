@@ -1,7 +1,7 @@
 
 #include "bucket.h"
 
-
+// can be seen as a block, the image is distributed in buckets
 Bucket::Bucket(int size){
     max_size = size;
 }
@@ -10,7 +10,7 @@ int Bucket::size(){
     return features.points.size();
 }
 
-
+// age can be seen as weight or 
 void Bucket::add_feature(cv::Point2f point, int age){
     // won't add feature with age > 10;
     int age_threshold = 10;

@@ -15,6 +15,7 @@
 #include <fstream>
 #include <string>
 #include <Eigen/Dense>
+// NonLinearOptimization is not used
 #include <unsupported/Eigen/NonLinearOptimization>
 #include <unsupported/Eigen/NumericalDiff>
 #include <opencv2/core/eigen.hpp>
@@ -41,8 +42,10 @@ int main(int argc, char **argv)
     // -----------------------------------------
     // Load images and calibration parameters
     // -----------------------------------------
-    bool display_ground_truth = false;
+//     bool display_ground_truth = false;
+    
     std::vector<Matrix> pose_matrix_gt;
+/*    
     if(argc == 4)
     {   display_ground_truth = true;
         cerr << "Display ground truth trajectory" << endl;
@@ -64,7 +67,12 @@ int main(int argc, char **argv)
     // Camera calibration
     string strSettingPath = string(argv[2]);
     cout << "Calibration Filepath: " << strSettingPath << endl;
-
+*/
+    string filepath = string("/media/cc/LENOVO_USB_HDD/data/kitti/data_odometry_gray/dataset/sequences/00/");
+    string strSettingPath = string("/home/cc/code/visual_odom/calibration/kitti00.yaml");
+    
+    bool display_ground_truth = true;
+    pose_matrix_gt = loadPoses("/media/cc/LENOVO_USB_HDD/data/kitti/dataset/poses/00.txt");
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
 
     
@@ -97,11 +105,12 @@ int main(int argc, char **argv)
 
 
     cv::Mat trajectory = cv::Mat::zeros(600, 1200, CV_8UC3);
-    pcl::visualization::PCLVisualizer *visualizer;
+    // show point cloud in another view
+//     pcl::visualization::PCLVisualizer *visualizer;
 
     FeatureSet currentVOFeatures;
 
-    PointCloud::Ptr features_cloud_ptr (new PointCloud);
+//     PointCloud::Ptr features_cloud_ptr (new PointCloud);
 
     cv::Mat points4D, points3D;
 
@@ -135,8 +144,8 @@ int main(int argc, char **argv)
 
     std::vector<FeaturePoint> oldFeaturePointsLeft;
     std::vector<FeaturePoint> currentFeaturePointsLeft;
-
-    boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+    // point cloud
+//     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
 
 
     for (int frame_id = init_frame_id+1; frame_id < 9000; frame_id++)
@@ -215,19 +224,20 @@ int main(int argc, char **argv)
         // -------------------------------
 
         // removeExistPoints(newPoints, valid, currentPointsLeft_t0, oldPointsLeft_t0);
-        distinguishNewPoints(newPoints, valid, mapPoints, frame_id-1, 
-                             points3D_t0, points3D_t1, points3D, 
-                             currentPointsLeft_t0, currentPointsLeft_t1, currentFeaturePointsLeft, oldFeaturePointsLeft);
-        oldFeaturePointsLeft = currentFeaturePointsLeft;
-        std::cout << "mapPoints size : " << mapPoints.size() << std::endl;
+//         distinguishNewPoints(newPoints, valid, mapPoints, frame_id-1, 
+//                              points3D_t0, points3D_t1, points3D, 
+//                              currentPointsLeft_t0, currentPointsLeft_t1, currentFeaturePointsLeft, oldFeaturePointsLeft);
+//         oldFeaturePointsLeft = currentFeaturePointsLeft;
+//         std::cout << "mapPoints size : " << mapPoints.size() << std::endl;
 
         // ------------------------------------------------
         // Append feature points to Point clouds
         // ------------------------------------------------
         // featureSetToPointCloudsValid(points3D, features_cloud_ptr, valid);
-        mapPointsToPointCloudsAppend(mapPoints, features_cloud_ptr);
-        std::cout << std::endl << "featureSetToPointClouds size: " << features_cloud_ptr->size() << std::endl;
-        simpleVis(features_cloud_ptr, viewer);
+	
+//         mapPointsToPointCloudsAppend(mapPoints, features_cloud_ptr);
+//         std::cout << std::endl << "featureSetToPointClouds size: " << features_cloud_ptr->size() << std::endl;
+//         simpleVis(features_cloud_ptr, viewer);
 
 
         // break;
@@ -237,8 +247,8 @@ int main(int argc, char **argv)
         // ------------------------------------------------
 
         cv::Vec3f rotation_euler = rotationMatrixToEulerAngles(rotation);
-        std::cout << "rotation: " << rotation_euler << std::endl;
-        std::cout << "translation: " << translation_stereo.t() << std::endl;
+//         std::cout << "rotation: " << rotation_euler << std::endl;
+//         std::cout << "translation: " << translation_stereo.t() << std::endl;
 
         cv::Mat rigid_body_transformation;
 
@@ -251,14 +261,14 @@ int main(int argc, char **argv)
             std::cout << "Too large rotation"  << std::endl;
         }
 
-        std::cout << "rigid_body_transformation" << rigid_body_transformation << std::endl;
+//         std::cout << "rigid_body_transformation" << rigid_body_transformation << std::endl;
 
-        std::cout << "frame_pose" << frame_pose << std::endl;
+//         std::cout << "frame_pose" << frame_pose << std::endl;
 
 
         Rpose =  frame_pose(cv::Range(0, 3), cv::Range(0, 3));
         cv::Vec3f Rpose_euler = rotationMatrixToEulerAngles(Rpose);
-        std::cout << "Rpose_euler" << Rpose_euler << std::endl;
+//         std::cout << "Rpose_euler" << Rpose_euler << std::endl;
 
         cv::Mat pose = frame_pose.col(3).clone();
 
@@ -266,8 +276,8 @@ int main(int argc, char **argv)
         fps = float(frame_id-init_frame_id)/(toc-tic)*CLOCKS_PER_SEC;
 
         // pose = -pose;
-        std::cout << "Pose" << pose.t() << std::endl;
-        std::cout << "FPS: " << fps << std::endl;
+//         std::cout << "Pose" << pose.t() << std::endl;
+//         std::cout << "FPS: " << fps << std::endl;
 
         display(frame_id, trajectory, pose, pose_matrix_gt, fps, display_ground_truth);
 
