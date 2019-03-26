@@ -3,6 +3,7 @@
 2. Buckect and circle match is a good idea. Bucket can be seen as a type of features extraction such as image segmentated into blocks.
 3. function distinguishNewPoints() will drag down the real-time nature of the system
    1) add new features, and check every feature is already exist.
+4. Not use keyframe strategy
 
 ## Stereo Visual Odometry
 
