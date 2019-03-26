@@ -1,3 +1,9 @@
+## Impression
+1. No BA optimizatin in this project
+2. Buckect and circle match is a good idea. Bucket can be seen as a type of features extraction such as image segmentated into blocks.
+3. function distinguishNewPoints() will drag down the real-time nature of the system
+   1) add new features, and check every feature is already exist.
+
 ## Stereo Visual Odometry
 
 This repository is C++ OpenCV implementation of SOFT (Stereo Odometry based on careful Feature selection and Tracking)
