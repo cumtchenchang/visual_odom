@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 # set (EIGENPATH "/Users/holly/Programs/eigen/" )
+set(CMAKE_BUILD_TYPE "Debug")
 find_package (Eigen3 REQUIRED NO_MODULE)
 INCLUDE_DIRECTORIES ( ${EIGEN3_INCLUDE_DIR} )
 message(STATUS "EIGENPATH: " ${EIGEN3_INCLUDE_DIR})
