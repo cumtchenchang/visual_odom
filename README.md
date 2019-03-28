@@ -16,6 +16,7 @@ Demo vedio: https://www.youtube.com/watch?v=Z3S5J_BHQVw&t=17s
 ![alt text](https://github.com/ZhenghaoFei/visual_odom/blob/master/images/features.png "features")
 
 ![alt text](https://github.com/ZhenghaoFei/visual_odom/blob/master/images/trajectory.png "trajectory")
+![alt text](https://github.com/ZhenghaoFei/visual_odom/blob/master/images/euroc_trajectory.png "euroc_trajectory")
 
 ### Requirements
 [OpenCV 3.0](https://opencv.org/)
