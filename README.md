@@ -16,7 +16,7 @@ Demo vedio: https://www.youtube.com/watch?v=Z3S5J_BHQVw&t=17s
 ![alt text](https://github.com/ZhenghaoFei/visual_odom/blob/master/images/features.png "features")
 ![alt text](https://github.com/cumtchenchang/visual_odom/master/images/euroc_trajectory.png "feature"）
 
-![alt text](https://github.com/ZhenghaoFei/visual_odom/blob/master/images/trajectory.png "trajectory")
+![image](https://github.com/ZhenghaoFei/visual_odom/blob/master/images/trajectory.png)
 
 
 ### Requirements
