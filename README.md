@@ -14,7 +14,7 @@ Original Paper: https://lamor.fer.hr/images/50020776/Cvisic2017.pdf
 Demo vedio: https://www.youtube.com/watch?v=Z3S5J_BHQVw&t=17s
 
 ![alt text](https://github.com/ZhenghaoFei/visual_odom/blob/master/images/features.png "features")
-![Image text](https://raw.githubusercontent.com/cumtchenchang/visual_odom/master/images/euroc_trajectory.png）
+![alt text](https://github.com/cumtchenchang/visual_odom/master/images/euroc_trajectory.png "feature"）
 
 ![alt text](https://github.com/ZhenghaoFei/visual_odom/blob/master/images/trajectory.png "trajectory")
 
