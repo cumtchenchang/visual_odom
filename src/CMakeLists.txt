@@ -27,7 +27,8 @@ add_library(Frame SHARED "Frame.cpp")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 message(${PROJECT_SOURCE_DIR})
 
-add_executable( run main.cpp )
+add_executable( kitti_run main.cpp )
+add_executable( euroc_run euroc_main.cpp )
 target_link_libraries( bucket ${OpenCV_LIBS} )
 target_link_libraries( feature ${OpenCV_LIBS} bucket)
 target_link_libraries( utils evaluate_odometry feature ${OpenCV_LIBS} ${PCL_LIBRARIES})
@@ -38,4 +39,6 @@ target_link_libraries( Frame ${OpenCV_LIBS} )
 
 target_link_libraries( MapPoint Frame ${OpenCV_LIBS} )
 
-target_link_libraries( run ${OpenCV_LIBS} bucket feature utils visualOdometry Frame MapPoint ${PCL_LIBRARIES})
+target_link_libraries( kitti_run ${OpenCV_LIBS} bucket feature utils visualOdometry Frame MapPoint ${PCL_LIBRARIES})
+
+target_link_libraries( euroc_run ${OpenCV_LIBS} bucket feature utils visualOdometry Frame MapPoint ${PCL_LIBRARIES})

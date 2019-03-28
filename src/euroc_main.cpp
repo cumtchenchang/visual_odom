@@ -5,6 +5,7 @@
 #include "opencv2/calib3d/calib3d.hpp"
 
 #include <iostream>
+#include <string.h>
 #include <ctype.h>
 #include <algorithm>
 #include <iterator>
@@ -44,34 +45,16 @@ int main(int argc, char **argv)
 //     bool display_ground_truth = false;
     
     std::vector<Matrix> pose_matrix_gt;
-/*    
-    if(argc == 4)
-    {   display_ground_truth = true;
-        cerr << "Display ground truth trajectory" << endl;
-        // load ground truth pose
-        string filename_pose = string(argv[3]);
-        pose_matrix_gt = loadPoses(filename_pose);
 
-    }
-    if(argc < 3)
-    {
-        cerr << "Usage: ./run path_to_sequence path_to_calibration [optional]path_to_ground_truth_pose" << endl;
-        return 1;
-    }
-
-    // Sequence
-    string filepath = string(argv[1]);
-    cout << "Filepath: " << filepath << endl;
-
-    // Camera calibration
-    string strSettingPath = string(argv[2]);
-    cout << "Calibration Filepath: " << strSettingPath << endl;
-*/
-    string filepath = string("/media/cc/LENOVO_USB_HDD/data/kitti/data_odometry_gray/dataset/sequences/00/");
+    string filepath = string("/home/cc/data/mav0/cam0/data");
+    string right_filepath=string("/home/cc/data/mav0/cam1/data");
+    string timestampes=string("/home/cc/data/mav0/MH01.txt");
     string strSettingPath = string("/home/cc/code/visual_odom/calibration/kitti00.yaml");
+    vector<string> vTimeStamp;
+    bool display_ground_truth = false;
     
-    bool display_ground_truth = true;
-    pose_matrix_gt = loadPoses("/media/cc/LENOVO_USB_HDD/data/kitti/dataset/poses/00.txt");
+    
+//     pose_matrix_gt = loadPoses("/media/cc/LENOVO_USB_HDD/data/kitti/dataset/poses/00.txt");
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
 
     
@@ -114,54 +97,63 @@ int main(int argc, char **argv)
     cv::Mat points4D, points3D;
 
 
-
-
-    int init_frame_id = 0;
-
-    // ------------------------
-    // Load first images
-    // ------------------------
-    cv::Mat imageLeft_t0_color,  imageLeft_t0;
-
-    loadImageLeft(imageLeft_t0_color,  imageLeft_t0, init_frame_id, filepath);
+// for euroc datasets
     
-    cv::Mat imageRight_t0_color, imageRight_t0;  
-    loadImageRight(imageRight_t0_color, imageRight_t0, init_frame_id, filepath);
+   
+    ifstream fTimes;
+    fTimes.open(timestampes.c_str());
+    vTimeStamp.reserve(5000);
+    while(!fTimes.eof())
+    {
+        string s;
+        getline(fTimes,s);
+        if(!s.empty())
+        {
+            stringstream ss;
+            ss << s;
+            vTimeStamp.push_back(ss.str());
 
-
-    float fps;
-
-
+        }
+    }
+    
+    cout<<"vTimeStamp.size= "<<vTimeStamp.capacity()<<endl;
+    
+    
+//      vstrImageLeft.push_back(strPathLeft + "/" + ss.str() + ".png");
+//      vstrImageRight.push_back(strPathRight + "/" + ss.str() + ".png");
+    string imageLeft_t0_path=filepath+"/"+*(vTimeStamp.begin()) + ".png";
+    string imageRight_t0_path=right_filepath+"/" + *(vTimeStamp.begin()) + ".png";
+    
+    int frame_id = 0;
+    cv::Mat imageLeft_t0,imageRight_t0;
+    imageLeft_t0=cv::imread(imageLeft_t0_path,cv::IMREAD_GRAYSCALE);
+    imageRight_t0=cv::imread(imageRight_t0_path,cv::IMREAD_GRAYSCALE);   
+    
     // -----------------------------------------
     // Run visual odometry
     // -----------------------------------------
 
     clock_t tic = clock();
 
-
     std::vector<MapPoint> mapPoints;
 
     std::vector<FeaturePoint> oldFeaturePointsLeft;
     std::vector<FeaturePoint> currentFeaturePointsLeft;
-    // point cloud
-//     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-
-
-    for (int frame_id = init_frame_id+1; frame_id < 9000; frame_id++)
+   
+    
+    for(vector<string>::iterator iter=vTimeStamp.begin()+1;iter!=vTimeStamp.end();++iter)
     {
-
-
-
-        std::cout << std::endl << "frame_id " << frame_id << std::endl;
-        // ------------
-        // Load images
-        // ------------
-        cv::Mat imageLeft_t1_color,  imageLeft_t1;
-        loadImageLeft(imageLeft_t1_color,  imageLeft_t1, frame_id, filepath);        
-        cv::Mat imageRight_t1_color, imageRight_t1;  
-        loadImageRight(imageRight_t1_color, imageRight_t1, frame_id, filepath);
-
-        std::vector<cv::Point2f> oldPointsLeft_t0 = currentVOFeatures.points;
+       clock_t tic = clock();
+       frame_id++;
+       string mid_name=*iter;
+       string imageLeft_t1_path=filepath+"/" +mid_name+ ".png";
+       cout<<"imageLeft_t1_path"<<imageLeft_t1_path<<endl;
+       string imageRight_t1_path=right_filepath+"/" +mid_name+ ".png";
+       cv::Mat imageLeft_t1=cv::imread(imageLeft_t1_path,cv::IMREAD_GRAYSCALE);
+       cv::Mat imageRight_t1=cv::imread(imageRight_t1_path,cv::IMREAD_GRAYSCALE);
+  
+      
+       std::vector<cv::Point2f> oldPointsLeft_t0 = currentVOFeatures.points;
 
 
         std::vector<cv::Point2f> pointsLeft_t0, pointsRight_t0, pointsLeft_t1, pointsRight_t1;  
@@ -216,35 +208,7 @@ int main(int argc, char **argv)
         frame_pose.convertTo(frame_pose32, CV_32F);
         points4D = frame_pose32 * points4D;
         cv::convertPointsFromHomogeneous(points4D.t(), points3D);
-
-
-        // -------------------------------
-        // Append new points to mapPoints
-        // -------------------------------
-
-        // removeExistPoints(newPoints, valid, currentPointsLeft_t0, oldPointsLeft_t0);
-//         distinguishNewPoints(newPoints, valid, mapPoints, frame_id-1, 
-//                              points3D_t0, points3D_t1, points3D, 
-//                              currentPointsLeft_t0, currentPointsLeft_t1, currentFeaturePointsLeft, oldFeaturePointsLeft);
-//         oldFeaturePointsLeft = currentFeaturePointsLeft;
-//         std::cout << "mapPoints size : " << mapPoints.size() << std::endl;
-
-        // ------------------------------------------------
-        // Append feature points to Point clouds
-        // ------------------------------------------------
-        // featureSetToPointCloudsValid(points3D, features_cloud_ptr, valid);
 	
-//         mapPointsToPointCloudsAppend(mapPoints, features_cloud_ptr);
-//         std::cout << std::endl << "featureSetToPointClouds size: " << features_cloud_ptr->size() << std::endl;
-//         simpleVis(features_cloud_ptr, viewer);
-
-
-        // break;
-
-        // ------------------------------------------------
-        // Intergrating and display
-        // ------------------------------------------------
-
         cv::Vec3f rotation_euler = rotationMatrixToEulerAngles(rotation);
         std::cout << "rotation: " << rotation_euler << std::endl;
         std::cout << "translation: " << translation_stereo.t() << std::endl;
@@ -271,17 +235,19 @@ int main(int argc, char **argv)
 
         cv::Mat pose = frame_pose.col(3).clone();
 
-        clock_t toc = clock();
-        fps = float(frame_id-init_frame_id)/(toc-tic)*CLOCKS_PER_SEC;
+
 
         // pose = -pose;
 //         std::cout << "Pose" << pose.t() << std::endl;
 //         std::cout << "FPS: " << fps << std::endl;
+	int fps=1;
+	clock_t toc = clock();
+        float frame_time =(toc-tic)*1000/(double)CLOCKS_PER_SEC;
+	std::cout<<"the time of every frame(ms) "<<frame_time<<endl;
 
         display(frame_id, trajectory, pose, pose_matrix_gt, fps, display_ground_truth);
 
         // break;
-
 
     }
 
